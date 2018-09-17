@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+	$(document).ready(function(){
+        $(".fade").hide();
+        $(".show").hide();
+/*         $("#menu2").hide();
+        $("#menu3").hide(); */
+	
+    $("#menu1").click(function(){
+    	$(".show1").show();
+        $(".fade1").fadeTo(500, 1);
+        //setTimeout(showSecondMenu, 2000);
+    });
+    
+    $("#menu2").click(function(){
+    	$(".show2").show();
+        $(".fade2").fadeTo(1000, 1);
+        //setTimeout(showThirdMenu, 2000);
+        //$("#menu3").delay(2000).show();
+    });
+    
+    $("#menu3").click(function(){
+    	$(".show3").show();
+        $(".fade3").fadeTo(1000, 1);
+    });
+    
+});
+	
+	function showSecondMenu() {
+		$("#menu2").show();
+	}
+	
+	function showThirdMenu() {
+		$("#menu3").show();
+	}
+	
+</script>
+<style>
+	ul {
+		list-style: none;
+		padding: 3px;
+		margin: 0;
+		display: inline-block;
+		}
+	li {
+		display: block;
+		padding:3px;
+		}
+	li:hover {
+		cursor:pointer;
+		}
+	.button {
+		padding:10px;
+		margin-left:10px;
+	}
+	.list {
+		float: left;
+		padding-top:5px;
+		}
+	#list1 {
+	margin-left:10px;
+	}
+	#list2 {
+	margin-left:25px;
+	}
+	#list3 {
+	margin-left:25px;
+	}
+</style>
+</head> 
+<body>
+<div><h4> Item 3, in Menu 1 </h4></div>
+
+
+<div>
+<button class="button" id="menu1"> Menu 1</button>
+<button class="button" id="menu2"> Menu 2</button>
+<button class="button" id="menu3"> Menu 3</button>
+</div>
+<div>
+<div class="list" id="list1">
+<ul>
+<li class="show show1"> Item 1 </li>
+<li class="fade fade1"> Item 2 </li>
+<li class="fade fade1"> Item 3 </li>
+<li class="show show1"> Item 4 </li>
+</ul>
+</div>
+<div class="list" id="list2">
+<ul>
+<li class="fade fade2"> Item 1 </li>
+<li class="show show2"> Item 2 </li>
+<li class="fade fade2"> Item 3 </li>
+<li class="show show2"> Item 4 </li>
+</ul>
+</div>
+<div class="list" id="list3">
+<ul>
+<li class="fade fade3"> Item 1 </li>
+<li class="fade fade3"> Item 2 </li>
+<li class="show show3"> Item 3 </li>
+<li class="fade fade3"> Item 4 </li>
+</ul>
+</div>
+</div>
+</body>
+</html>
