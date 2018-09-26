@@ -14,6 +14,7 @@ function createMenu(submenus, ephemeral = true) {
     closeSubmenu();
     openList = lists[i];
     menu.appendChild(openList);
+    console.log('menu ' + i + ":  " + getTimeStamp())
   };
 
   const tabs = document.createElement('ul');
