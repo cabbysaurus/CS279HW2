@@ -8,26 +8,16 @@ const wordList =  // Each group of 4 is related
 	"Saturn", "Venus", "Jupiter", "Mercury", 
 	"France", "England", "Spain", "Germany", 
 	"Pecan", "Walnut", "Almond", "Pistachio", 
-	"Sapphire", "Topaz", "Pearl", "Emerald", 
-	"Minotaur", "Sasquatch", "Ogopogo", "Bigfoot", 
+        
+	"Sapphire", "Topaz", "Pearl", "Emerald",  
 	"Blimp", "Helicopter", "Airplane", "Balloon", 
 	"Safflower", "Canola", "Olive", "Sesame", 
 	"Baseball", "Basketball", "Football", "Soccer", 
+        
 	"Pants", "Shirt", "Socks", "Dress", 
 	"Red", "Blue", "Green", "Yellow", 
 	"Jazz", "Classical", "Reggae", "Rock", 
-	"Breakfast", "Lunch", "Dinner", "Brunch", 
-	"Lake", "Sea", "Pond", "Ocean", 
-	"Harvard", "Yale", "Princeton", "Columbia", 
-	"Pine", "Maple", "Oak", "Elm",
-	"Sofa", "Chair", "Table", "Desk",
-	"Rose", "Tulip", "Daffodil", "Lily",
-	"Sight", "Touch", "Smell", "Taste",
-	"Book", "Magazine", "Newspaper", "Journal",
-	"Math", "Science", "History", "English",
-	"Shakespeare", "Hemmingway", "Tolstoy", "Dickens",
-	"Facebook", "Instagram", "Snapchat", "Twitter",
-	"Jalapeno", "Habanero", "Poblano", "Serrano"];
+	"Breakfast", "Lunch", "Dinner", "Brunch"];
 
 //const sequence = [24,43,17,43,17,27,42,17,6,42,20,17,16,35,34,6,46,
 //	6,46,34,16,0,42,42,42,0,16,33,10,42,20,46,44,42,16,35,20,3,46,
@@ -35,7 +25,6 @@ const wordList =  // Each group of 4 is related
 //	16,42,6,40,33,16,3,35,16,17,40,21,5,44,3,42,15,34,43,6,15,16,42,6,5,
 //	42,31,17,10,20,27,35,42,16,6,15,7,21,19,16,6,16,10,8,6,34,6,6,7,10,20,
 //	35,17,46,6,7,0,16,15,42,16,17,15];
-
 
 
 $(document).ready(function(){
@@ -90,92 +79,93 @@ $(document).ready(function(){
     
 });
 
-var counter = 0;
-var sequence = [0, 0, 2, 1];
-var tar = sequence[0];
-
-var clicks = 0;
-var target = 3;
-var freq = [0, 0, 0, 0];
-var recent = 5;
-var freq1 = 0;
-var freq2 = 1;
-var freq3 = 2;
 var menuNum = 1;
+var itemName = "Chardonnay";
+var userMenu = "-1";
+var userItem = "-1";
+
+var start = Date.now();
 
 
-function clickFunction(x) {
-	if(x==tar)
-    {
-    	counter++;
-        tar = sequence[counter];
-        menuNum = parseInt(tar / 16) + 1;
-        document.getElementById("fieldx").value = "Menu: " + menuNum + " Item:" + wordList[tar];
-//        document.getElementById(x).classList.add('fade1');
+function getNextMenu(menu) {
+    if(menu === 1) {
+        if(Math.random() > 0.5) {
+            return 2;
+        }
+        else {
+            return 3;
+        }
     }
+    if(menu === 2) {
+        if(Math.random() > 0.5) {
+            return 1;
+        }
+        else {
+            return 3;
+        }
+    }
+    if(menu === 3) {
+        if(Math.random() > 0.5) {
+            return 1;
+        }
+        else {
+            return 2;
+        }
+    }
+}
 
-	freq[x] = freq[x] + 1;
-    recent = x;
-    //document.getElementById("field3").value = recent.toString();
-//    if(x==target) {
-//    	checkCorrect();
-//    }
-    updateClicks();
-    
-    var temp = freq;
-    getThreeFreq(temp);
-    
-    // first unfade then add fade to items that need it
-    // not working
-    document.getElementsByClassName("fade1").classList.remove("fade1");
-    document.getElementById(recent).classList.add('fade1');
-    if (freq1 != recent) {
-    	document.getElementById(freq1).classList.add('fade1');
-    	if (freq2 != recent) {
-    		document.getElementById(freq2).classList.add('fade1');
-    	}
-    	else {
-    		document.getElementById(freq3).classList.add('fade1');
-    	}
+
+function getRandItem(menu) {
+    index = 16*(menu-1) + Math.floor(Math.random() * 15);
+    return wordList[index];
+}
+
+
+function updatePrompt() {
+    if(document.getElementById("prompt") !== null) {
+        menuNum = getNextMenu(menuNum);
+        itemName = getRandItem(menuNum);
+        document.getElementById("prompt").innerHTML = "Menu " + menuNum +  ", " + itemName;
+    }
+}
+
+function getTimeStamp() {
+    // return new Date().getTime();
+    return Date.now() - start;
+}
+
+
+function clickListener(e) {   
+    var clickedElement=(window.event)
+                        ? window.event.srcElement
+                        : e.target,
+    tags=document.getElementsByTagName(clickedElement.tagName);
+    // Logging
+    if(clickedElement.tagName !== 'HTML') {
+        console.log(clickedElement.innerHTML + ':  ' + getTimeStamp());
     }
     else {
-    	document.getElementById(freq2).classList.add('fade1');
-    	document.getElementById(freq3).classList.add('fade1');
+        console.log('Blank :  ' + getTimeStamp());
     }
     
-    
-    //document.getElementById("field6").value = freq[x].toString();
-    // need to close the menu that is open
-  	}
+    if(clickedElement.tagName !== 'HTML') {
+        // Update Values
+        if(clickedElement.innerHTML.substring(0, 4) === "Menu") {
+            userMenu = clickedElement.innerHTML;
+        }
+        else if(clickedElement.innerHTML.length < 15) {
+            userItem = clickedElement.innerHTML.replace(" ", "");
+        }
 
-function updateClicks()	{
-	clicks++;
-	//document.getElementById("field1").value = clicks.toString();
+        // Check Values
+        console.log(userItem, itemName);
+        console.log(userItem.length, itemName.length);
+        if(userItem === itemName + " ") {
+            console.log("Correct");
+            updatePrompt();
+        }
     }
-    
-function checkCorrect()	{
-	document.getElementById("field2").value = "Correct";
-    }
+}
 
-function getThreeFreq(x) {
-
-	var a = x.slice(0);
-	
-    var index = a.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
-    freq1 = index;
-    //document.getElementById(index).classList.add('fade1');
-    a[index] = -1;
-    
-    var index = a.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
-    freq2 = index;
-    //document.getElementById(index).classList.add('fade1');
-    a[index] = -1;
-    
-    var index = a.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
-    freq3 = index;
-    //document.getElementById(index).classList.add('fade1');
-    a[index] = -1;
-
-
-	}
+document.onclick = clickListener;
 	
