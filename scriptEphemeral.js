@@ -49,6 +49,7 @@ var taskNum = 0;
 var menuNum = getMenuNumber(taskNum);
 var itemName = getItemName(taskNum);
 var userMenu = -1;
+var userClicks = 0;
 var userItem = "-1";
 var selectedItem = -1;
 var clickCounts = [];
@@ -60,43 +61,65 @@ for (let i = 0; i < wordList.length; i++) {
 var recents = [0, 16, 32];
 var start = Date.now();
 var predictions = [0, 1, 2, 16, 17, 18, 32, 33, 34];
+var corrections = [107, 29, 94, 114, 3, 22, 56, 47, 28, 1, 74, 117, 121, 57, 25, 103, 9, 53];
+
 
 // update predictions for all three menus so that they are up to date regardless of where the user clicks
 function updatePredictions() {
-	let frequents = [];
-	// get frequents for first menu
-	let menu1freqs = getThreeFreq(clickCounts.slice(0, 16));
-	let menu2freqs = getThreeFreq(clickCounts.slice(16, 32));
-	for (let i = 0; i < menu2freqs.length; i++) {
-		menu2freqs[i] += 16;
-	}
-	let menu3freqs = getThreeFreq(clickCounts.slice(16, 32));
-	for (let i = 0; i < menu3freqs.length; i++) {
-		menu3freqs[i] += 32;
-	}
-	// first remove old predictions
-	let shows = document.getElementsByClassName("show");
-	while (shows[0]) {
-		shows[0].classList.add("fade");
-		shows[0].classList.remove("show");
-	}
-	
-	predictions.splice(0, predictions.length);
-	
-	// then get new ones for each menu
-	getThreePreds(recents[0], menu1freqs);
-	getThreePreds(recents[1], menu2freqs);
-	getThreePreds(recents[2], menu3freqs);
-	
-	for (let i = 0; i < predictions.length; i++) {
-		let elem = document.getElementById(predictions[i]);
-		//document.write(elem.innerHTML);
-		elem.classList.remove("fade");
-		elem.classList.add("show");
-	}
-	//document.write('yes!');
-	//frequents.push(getThreeFreq(clickCounts.slice(32, 48)));
-	//document.write(frequents);
+    let frequents = [];
+    // get frequents for first menu
+    let menu1freqs = getThreeFreq(clickCounts.slice(0, 16));
+    let menu2freqs = getThreeFreq(clickCounts.slice(16, 32));
+    for (let i = 0; i < menu2freqs.length; i++) {
+            menu2freqs[i] += 16;
+    }
+    let menu3freqs = getThreeFreq(clickCounts.slice(16, 32));
+    for (let i = 0; i < menu3freqs.length; i++) {
+            menu3freqs[i] += 32;
+    }
+    
+    // first remove old predictions
+    let shows = document.getElementsByClassName("show");
+    while (shows[0]) {
+            shows[0].classList.add("fade");
+            shows[0].classList.remove("show");
+    }
+
+    predictions.splice(0, predictions.length);
+
+    // then get new ones for each menu
+    getThreePreds(recents[0], menu1freqs);
+    getThreePreds(recents[1], menu2freqs);
+    getThreePreds(recents[2], menu3freqs);
+    
+    // Correct Predictions
+    userItemIndex = wordList.indexOf(userItem);
+    itemIndex = wordList.indexOf(itemName);
+    // console.log(predictions);
+    if(corrections.indexOf(taskNum) !== -1) {
+        if(predictions.indexOf(userItemIndex) === -1) {     // High accuracy
+        if(itemIndex < 16) {
+            predictions[0] = itemIndex;
+        }
+        else if(itemIndex < 32) {
+            predictions[3] = itemIndex;
+        }
+        else {
+            predictions[6] = itemIndex;
+        }
+    }
+    }
+    // console.log(predictions);
+
+    for (let i = 0; i < predictions.length; i++) {
+            let elem = document.getElementById(predictions[i]);
+            //document.write(elem.innerHTML);
+            elem.classList.remove("fade");
+            elem.classList.add("show");
+    }
+    //document.write('yes!');
+    //frequents.push(getThreeFreq(clickCounts.slice(32, 48)));
+    //document.write(frequents);
 }
 
 function getThreePreds(r, freqs) {
@@ -117,6 +140,7 @@ function getThreePreds(r, freqs) {
 	}
 	//return preds;
 }
+
 
 function getThreeFreq(arr) {
 	if (arr.length === 0) {
@@ -214,7 +238,9 @@ function getTimeStamp() {
 }
 
 
-function clickListener(e) {   
+function clickListener(e) {  
+    userClicks += 1;
+    console.log("Click " + userClicks);
     var clickedElement=(window.event)
                         ? window.event.srcElement
                         : e.target,
@@ -253,15 +279,22 @@ function clickListener(e) {
         }
         
         // Check Values
-        console.log(userItem, itemName);
-        console.log(userItem.length, itemName.length);
-        if(userItem === itemName + " ") {
+        userItem = userItem.substring(0, userItem.length-1);
+        itemIndex = wordList.indexOf(itemName);
+        // console.log(itemIndex, predictions);
+        if(predictions.indexOf(itemIndex) !== -1) {
+            console.log("No Fade (predicted)");
+        }
+        else {
+            console.log("Fade (not predicted)");
+        }
+        if(userItem === itemName) {
             console.log("Correct");
+            userItem = "";
             closeMenu();
             updatePredictions();
             updatePrompt();
-        }
+        } 
     }
 }
-
 document.onclick = clickListener;
